@@ -19,9 +19,9 @@ struct Point{
 Map createMap();
 void printMap(Map map);
 //----------//----------//----------//
-void start(Map map);
+void start(Map &map);
 //----------//----------//----------//
-void gameLogic(Map map);
+void gameLogic(Map &map);
 bool canToGrow(Map map, Point cell);
 bool wantToGrow();
 Point grow(Map map, Point cell);
@@ -44,6 +44,7 @@ void printMap(Map map){
         }
         cout<<"\n";
     }
+    cout << "\n";
 }
 Map createMap(){
     Map map;
@@ -59,7 +60,7 @@ Map createMap(){
     return map;
 }
 //----------//----------//----------//
-void start(Map map){
+void start(Map &map){
     bool end = false;
 
     while(!end){
@@ -71,7 +72,7 @@ void start(Map map){
     }
 }
 //----------//----------//----------//
-void gameLogic(Map map){
+void gameLogic(Map &map){
     Point array1[map.size*map.size];
     Point array2[map.size*map.size];
     int iter1 = 0;
@@ -82,19 +83,30 @@ void gameLogic(Map map){
         for (int j = 0; j < map.size; ++j) {
             cell.x = j;
             cell.y = i;
-            if (canToGrow(map, cell) && wantToGrow()){
-                if (map.array[j][i] == 1){
+            if (canToGrow(map, cell) && wantToGrow()) {
+                if (map.array[i][j] == 1) {
                     array1[iter1] = grow(map, cell);
                     iter1++;
-                } else if (map.array[j][i] == 2){
+                } else if (map.array[i][j] == 2) {
                     array2[iter2] = grow(map, cell);
                     iter2++;
                 }
             }
         }
     }
+    for (int k = 0; k < iter1; ++k) {
+        if (map.array[array1[k].y][array1[k].x] == 0) {
+            map.array[array1[k].y][array1[k].x] = 1;
+        } else map.array[array1[k].y][array1[k].x] = 0;
+    }
+
+    for (int k = 0; k < iter2; ++k) {
+        if (map.array[array2[k].y][array2[k].x] == 0) {
+            map.array[array2[k].y][array2[k].x] = 2;
+        } else map.array[array2[k].y][array2[k].x] = 0;
+    }
     //----------//
-    cout <<"Array1: ";
+    /*cout <<"Array1: ";
     for (int k = 0; k < iter1; ++k) {
         cout << "|" << array1[k].x <<" " << array1[k].y <<"|";
     }
@@ -102,7 +114,7 @@ void gameLogic(Map map){
     for (int k = 0; k < iter2; ++k) {
         cout << "|" << array2[k].x <<" " << array2[k].y <<"|";
     }
-    cout << "\n";
+    cout << "\n";*/
     //----------//
 }
 bool canToGrow(Map map, Point cell){
