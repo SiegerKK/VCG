@@ -3,6 +3,8 @@
 #include <ctime>
 #include <unistd.h>
 
+#include "includes/colorLinux.cpp"
+
 using namespace std;
 
 //----------//----------//----------//
@@ -31,6 +33,7 @@ int main() {
     srand(time(0));
 
     Map map = createMap();
+    //setColor(YELLOW);
     start(map);
 
     return 0;
@@ -40,7 +43,21 @@ int main() {
 void printMap(Map map){
     for (int i = 0; i < map.size; ++i) {
         for (int j = 0; j < map.size; ++j) {
-            cout << map.array[i][j] << " ";
+            switch (map.array[i][j]){
+                case 1:
+                    setColor(BLUE);
+                    cout << "X";
+                    setColor(RESET);
+                    break;
+                case 2:
+                    setColor(RED);
+                    cout << "X";
+                    setColor(RESET);
+                    break;
+                default:
+                    cout << "O";
+                    break;
+            }
         }
         cout<<"\n";
     }
@@ -62,13 +79,19 @@ Map createMap(){
 //----------//----------//----------//
 void start(Map &map){
     bool end = false;
+    int i = 0;
 
     while(!end){
         gameLogic(map);
+        system("clear");
         printMap (map);
 
         usleep(100000);
 
+        i++;
+        if(i == 250){
+            end = true;
+        }
     }
 }
 //----------//----------//----------//
