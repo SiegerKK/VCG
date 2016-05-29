@@ -28,6 +28,8 @@ bool canToGrow(Map map, Point cell);
 bool wantToGrow();
 Point grow(Map map, Point cell);
 //----------//----------//----------//
+void deleteMap(Map &map);
+//----------//----------//----------//
 
 int main() {
     srand(time(0));
@@ -35,6 +37,7 @@ int main() {
     Map map = createMap(20);
     start(map);
 
+    deleteMap(map);
     return 0;
 }
 
@@ -53,6 +56,8 @@ Map createMap(int size){
 
     map.array[0][map.size-1]=1;
     map.array[map.size-1][0]=2;
+    map.array[0][0]=3;
+    map.array[map.size-1][map.size-1]=4;
 
     return map;
 }
@@ -62,16 +67,26 @@ void printMap(Map map){
             switch (map.array[i][j]){
                 case 1:
                     setColor(RED);
-                    cout << "X";
+                    cout << "X ";
                     setColor(RESET);
                     break;
                 case 2:
                     setColor(BLUE);
-                    cout << "X";
+                    cout << "X ";
+                    setColor(RESET);
+                    break;
+                case 3:
+                    setColor(YELLOW);
+                    cout << "X ";
+                    setColor(RESET);
+                    break;
+                case 4:
+                    setColor(GREEN);
+                    cout << "X ";
                     setColor(RESET);
                     break;
                 default:
-                    cout << "O";
+                    cout << "O ";
                     break;
             }
         }
@@ -99,36 +114,29 @@ void start(Map &map){
 }
 //----------//----------//----------//
 void gameLogic(Map &map){
-    Point array1[map.size*map.size];
-    Point array2[map.size*map.size];
-    int iter1 = 0;
-    int iter2 = 0;
+    Point array[4][map.size*map.size];
+    int iter[4];
+    for (int l = 0; l < 4; ++l) {
+        iter[l] = 0;
+    }
 
     Point cell;
     for (int i = 0; i < map.size; ++i) {
         for (int j = 0; j < map.size; ++j) {
             cell.x = j;
             cell.y = i;
-            if (canToGrow(map, cell) && wantToGrow()) {
-                if (map.array[i][j] == 1) {
-                    array1[iter1] = grow(map, cell);
-                    iter1++;
-                } else if (map.array[i][j] == 2) {
-                    array2[iter2] = grow(map, cell);
-                    iter2++;
-                }
+            if (canToGrow(map, cell) && wantToGrow() && map.array[i][j]!=0) {
+                array[map.array[i][j] - 1][iter[map.array[i][j] - 1]] = grow(map, cell);
+                iter[map.array[i][j]-1]++;
             }
         }
     }
-    for (int k = 0; k < iter2; ++k) {
-        if (map.array[array2[k].y][array2[k].x] == 0) {
-            map.array[array2[k].y][array2[k].x] = 2;
-        } else map.array[array2[k].y][array2[k].x] = 0;
-    }
-    for (int k = 0; k < iter1; ++k) {
-        if (map.array[array1[k].y][array1[k].x] == 0) {
-            map.array[array1[k].y][array1[k].x] = 1;
-        } else map.array[array1[k].y][array1[k].x] = 0;
+    for (int i = 3; i >= 0; --i) {
+        for (int k = 0; k < iter[i]; ++k) {
+            if (map.array[array[i][k].y][array[i][k].x] == 0) {
+                map.array[array[i][k].y][array[i][k].x] = i + 1;
+            } else map.array[array[i][k].y][array[i][k].x] = 0;
+        }
     }
 
     //----------//
@@ -199,5 +207,12 @@ Point grow(Map map, Point cell){
 
     }
     return cellNew;
+}
+//----------//----------//----------//
+void deleteMap(Map &map){
+    for (int i = 0; i < map.size; ++i) {
+        delete[] map.array[i];
+    }
+    delete[] map.array;
 }
 //----------//----------//----------//
