@@ -10,7 +10,7 @@ using namespace std;
 //----------//----------//----------//
 struct Map{
     int size;
-    int array[10][10];
+    int **array;
 };
 struct Point{
     int x;
@@ -18,7 +18,7 @@ struct Point{
 };
 
 //----------//----------//----------//
-Map createMap();
+Map createMap(int size);
 void printMap(Map map);
 //----------//----------//----------//
 void start(Map &map);
@@ -32,25 +32,41 @@ Point grow(Map map, Point cell);
 int main() {
     srand(time(0));
 
-    Map map = createMap();
-    //setColor(YELLOW);
+    Map map = createMap(20);
     start(map);
 
     return 0;
 }
 
 //----------//----------//----------//
+Map createMap(int size){
+    Map map;
+
+    map.size = size;
+    map.array = new int*[map.size];
+    for (int i = 0; i < map.size; ++i) {
+        map.array[i] = new int[map.size];
+        for (int j = 0; j < map.size; ++j) {
+            map.array[i][j] = 0;
+        }
+    }
+
+    map.array[0][map.size-1]=1;
+    map.array[map.size-1][0]=2;
+
+    return map;
+}
 void printMap(Map map){
     for (int i = 0; i < map.size; ++i) {
         for (int j = 0; j < map.size; ++j) {
             switch (map.array[i][j]){
                 case 1:
-                    setColor(BLUE);
+                    setColor(RED);
                     cout << "X";
                     setColor(RESET);
                     break;
                 case 2:
-                    setColor(RED);
+                    setColor(BLUE);
                     cout << "X";
                     setColor(RESET);
                     break;
@@ -63,19 +79,6 @@ void printMap(Map map){
     }
     cout << "\n";
 }
-Map createMap(){
-    Map map;
-    map.size = 10;
-    for (int i = 0; i < map.size; ++i) {
-        for (int j = 0; j < map.size; ++j) {
-            map.array[i][j] = 0;
-        }
-    }
-    map.array[0][map.size-1]=1;
-    map.array[map.size-1][0]=2;
-
-    return map;
-}
 //----------//----------//----------//
 void start(Map &map){
     bool end = false;
@@ -86,10 +89,10 @@ void start(Map &map){
         system("clear");
         printMap (map);
 
-        usleep(100000);
+        usleep(50000);
 
         i++;
-        if(i == 250){
+        if(i == 500){
             end = true;
         }
     }
@@ -117,17 +120,17 @@ void gameLogic(Map &map){
             }
         }
     }
+    for (int k = 0; k < iter2; ++k) {
+        if (map.array[array2[k].y][array2[k].x] == 0) {
+            map.array[array2[k].y][array2[k].x] = 2;
+        } else map.array[array2[k].y][array2[k].x] = 0;
+    }
     for (int k = 0; k < iter1; ++k) {
         if (map.array[array1[k].y][array1[k].x] == 0) {
             map.array[array1[k].y][array1[k].x] = 1;
         } else map.array[array1[k].y][array1[k].x] = 0;
     }
 
-    for (int k = 0; k < iter2; ++k) {
-        if (map.array[array2[k].y][array2[k].x] == 0) {
-            map.array[array2[k].y][array2[k].x] = 2;
-        } else map.array[array2[k].y][array2[k].x] = 0;
-    }
     //----------//
     /*cout <<"Array1: ";
     for (int k = 0; k < iter1; ++k) {
