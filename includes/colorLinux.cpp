@@ -18,5 +18,5 @@ enum Color{
 };
 
 void setColor(Color color){
-    std::cout << "\033[1;" << color << "m";
+    std::cout << "\033[" << color << "m";
 }
