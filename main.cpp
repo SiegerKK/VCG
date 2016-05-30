@@ -21,7 +21,7 @@ struct Point{
 Map createMap(int size);
 void printMap(Map map);
 //----------//----------//----------//
-void start(Map &map);
+void start(Map &map, int turns);
 //----------//----------//----------//
 void gameLogic(Map &map);
 bool canToGrow(Map map, Point cell);
@@ -36,8 +36,13 @@ unsigned int calcVirusesCount(Map &map, int virusNumber);
 int main() {
     srand(time(0));
 
-    Map map = createMap(20);
-    start(map);
+    //----------//
+    int mapSize = 20;
+    int turns = 2000;
+    //----------//
+
+    Map map = createMap(mapSize);
+    start(map, turns);
 
     deleteMap(map);
     return 0;
@@ -96,18 +101,24 @@ void printMap(Map map){
     }
     cout << "\n";
 
+
+    int countVirus[4];
+    int percents = (map.size * map.size) / 100;
+    for(int i = 0; i < 4; i++){
+        countVirus[i] = calcVirusesCount(map, i + 1);
+    }
     setColor(RED);
-    cout << calcVirusesCount(map, 1) << "\t";
+    cout << countVirus[0] << "(" << countVirus[0] / percents << "%)" << " ";
     setColor(BLUE);
-    cout << calcVirusesCount(map, 2) << "\t";
+    cout << countVirus[1] << "(" << countVirus[1] / percents << "%)" << " ";
     setColor(YELLOW);
-    cout << calcVirusesCount(map, 3) << "\t";
+    cout << countVirus[2] << "(" << countVirus[2] / percents << "%)" << " ";
     setColor(GREEN);
-    cout << calcVirusesCount(map, 4) << "\n";
+    cout << countVirus[3] << "(" << countVirus[3] / percents << "%)" << "\n";
     setColor(RESET);
 }
 //----------//----------//----------//
-void start(Map &map){
+void start(Map &map, int turns){
     bool end = false;
     int i = 0;
 
@@ -119,10 +130,15 @@ void start(Map &map){
         usleep(50000);
 
         i++;
-        if(i == 500){
+        if((i == turns) || (calcVirusesCount(map, 1) == map.size * map.size)
+           || (calcVirusesCount(map, 2) == map.size * map.size)
+           || (calcVirusesCount(map, 3) == map.size * map.size)
+           || (calcVirusesCount(map, 4) == map.size * map.size)){
             end = true;
         }
     }
+
+    cout << "Tunrs: " << i << "\n";
 }
 //----------//----------//----------//
 void gameLogic(Map &map){
