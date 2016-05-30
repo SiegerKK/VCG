@@ -29,6 +29,8 @@ bool wantToGrow();
 Point grow(Map map, Point cell);
 //----------//----------//----------//
 void deleteMap(Map &map);
+//----------//-Technical functions-//----------//
+unsigned int calcVirusesCount(Map &map, int virusNumber);
 //----------//----------//----------//
 
 int main() {
@@ -93,6 +95,16 @@ void printMap(Map map){
         cout<<"\n";
     }
     cout << "\n";
+
+    setColor(RED);
+    cout << calcVirusesCount(map, 1) << "\t";
+    setColor(BLUE);
+    cout << calcVirusesCount(map, 2) << "\t";
+    setColor(YELLOW);
+    cout << calcVirusesCount(map, 3) << "\t";
+    setColor(GREEN);
+    cout << calcVirusesCount(map, 4) << "\n";
+    setColor(RESET);
 }
 //----------//----------//----------//
 void start(Map &map){
@@ -214,5 +226,17 @@ void deleteMap(Map &map){
         delete[] map.array[i];
     }
     delete[] map.array;
+}
+//----------//-Technical functions-//----------//
+unsigned int calcVirusesCount(Map &map, int virusNumber){
+    unsigned int count = 0;
+    for(int i = 0; i < map.size; i++){
+        for (int j = 0; j < map.size; ++j) {
+            if(map.array[i][j] == virusNumber){
+                count++;
+            }
+        }
+    }
+    return count;
 }
 //----------//----------//----------//
