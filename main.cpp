@@ -39,7 +39,7 @@ int main() {
     srand(time(0));
 
     //----------//
-    int mapSize = 40;
+    int mapSize = 20;
     int turns = 2000;
     //----------//
 
@@ -126,18 +126,20 @@ void start(Map &map, int turns){
 
     ofstream out;
 
-    string fileLogName = to_string(time(NULL)) + ".log";
+    string fileLogName = ".logs/" + to_string(time(NULL)) + ".log";
     out.open(fileLogName.c_str());
     out << "Map's size:" << map.size << "\n";
 
     while(!end){
-        gameLogic(map);
+        i++;
+
         system("clear");
+        gameLogic(map);
         printMap (map);
+        cout << "Turn: " << i << "\n";
 
         usleep(50000);
 
-        i++;
         if((i == turns) || (calcVirusesCount(map, 1) == map.size * map.size)
            || (calcVirusesCount(map, 2) == map.size * map.size)
            || (calcVirusesCount(map, 3) == map.size * map.size)
@@ -172,11 +174,14 @@ void gameLogic(Map &map){
             }
         }
     }
-    for (int i = 3; i >= 0; --i) {
+    for (int i = 0; i < 4; ++i) {
         for (int k = 0; k < iter[i]; ++k) {
             if (map.array[array[i][k].y][array[i][k].x] == 0) {
                 map.array[array[i][k].y][array[i][k].x] = i + 1;
-            } else map.array[array[i][k].y][array[i][k].x] = 0;
+            } else if(map.array[array[i][k].y][array[i][k].x] == i + 1){
+                continue;
+            }
+            else map.array[array[i][k].y][array[i][k].x] = 0;
         }
     }
 
