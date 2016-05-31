@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctime>
 #include <unistd.h>
+#include <fstream>
 
 #include "includes/colorLinux.cpp"
 
@@ -31,13 +32,14 @@ Point grow(Map map, Point cell);
 void deleteMap(Map &map);
 //----------//-Technical functions-//----------//
 unsigned int calcVirusesCount(Map &map, int virusNumber);
+void writeLog(ofstream &out, Map map, int turn);
 //----------//----------//----------//
 
 int main() {
     srand(time(0));
 
     //----------//
-    int mapSize = 20;
+    int mapSize = 40;
     int turns = 2000;
     //----------//
 
@@ -122,6 +124,12 @@ void start(Map &map, int turns){
     bool end = false;
     int i = 0;
 
+    ofstream out;
+
+    string fileLogName = to_string(time(NULL)) + ".log";
+    out.open(fileLogName.c_str());
+    out << "Map's size:" << map.size << "\n";
+
     while(!end){
         gameLogic(map);
         system("clear");
@@ -136,8 +144,13 @@ void start(Map &map, int turns){
            || (calcVirusesCount(map, 4) == map.size * map.size)){
             end = true;
         }
+
+        if(i % 50 == 0){
+            writeLog(out, map, i);
+        }
     }
 
+    writeLog(out, map, i);
     cout << "Tunrs: " << i << "\n";
 }
 //----------//----------//----------//
@@ -254,5 +267,18 @@ unsigned int calcVirusesCount(Map &map, int virusNumber){
         }
     }
     return count;
+}
+void writeLog(ofstream &out, Map map, int turn){
+    out << "Turn: " << turn << "\n";
+
+    int countVirus[4];
+    int percents = (map.size * map.size) / 100;
+    for(int i = 0; i < 4; i++){
+        countVirus[i] = calcVirusesCount(map, i + 1);
+    }
+    out << countVirus[0] << "(" << countVirus[0] / percents << "%)" << " ";
+    out << countVirus[1] << "(" << countVirus[1] / percents << "%)" << " ";
+    out << countVirus[2] << "(" << countVirus[2] / percents << "%)" << " ";
+    out << countVirus[3] << "(" << countVirus[3] / percents << "%)" << "\n";
 }
 //----------//----------//----------//
